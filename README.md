@@ -1,6 +1,6 @@
 # Multi-Agent RAG System
 
-> **Production-ready conversational AI with 8-agent hierarchical orchestration, GraphRAG knowledge graphs, and real-time WebSocket streaming**
+> **Conversational AI with 8-agent hierarchical orchestration, GraphRAG knowledge graphs, and real-time WebSocket streaming**
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![AWS Bedrock](https://img.shields.io/badge/AWS-Bedrock-orange.svg)](https://aws.amazon.com/bedrock/)
@@ -149,7 +149,7 @@ multi-agent-rag/
 │   │   ├── supervisor_orchestrator.py  # LangGraph workflow
 │   │   ├── query_analyzer.py
 │   │   ├── router_agent.py
-│   │   ├── query_rewriter.py    # 🆕 Query rewrite loop
+│   │   ├── query_rewriter.py    
 │   │   ├── retrieval_agent.py
 │   │   ├── graph_query_agent.py
 │   │   ├── web_search_agent.py
@@ -158,14 +158,14 @@ multi-agent-rag/
 │   ├── retrieval/        # Search & reranking
 │   │   ├── vector_store.py      # Qdrant client
 │   │   ├── hybrid_search.py     # Vector + BM25 RRF
-│   │   ├── semantic_chunker.py  # 🆕 Max-Min chunking
-│   │   ├── bge_reranker.py      # 🆕 Cross-encoder
+│   │   ├── semantic_chunker.py  # Max-Min chunking
+│   │   ├── bge_reranker.py      # Cross-encoder
 │   │   └── reranker.py
 │   ├── graph/            # GraphRAG
 │   │   ├── neo4j_client.py
 │   │   ├── entity_extractor.py
 │   │   └── cypher_generator.py
-│   ├── evaluation/       # 🆕 RAG metrics
+│   ├── evaluation/       # RAG metrics
 │   │   └── rag_evaluator.py     # RAGAS-style evaluation
 │   ├── memory/           # Conversation persistence
 │   ├── api/              # FastAPI + WebSocket
@@ -202,7 +202,6 @@ multi-agent-rag/
 | [ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design, diagrams, schemas |
 | [SETUP.md](docs/SETUP.md) | Installation and configuration |
 | [API.md](docs/API.md) | REST & WebSocket reference |
-| [MVP_QUICKSTART.md](MVP_QUICKSTART.md) | Quick start guide |
 
 ## Performance Targets
 
