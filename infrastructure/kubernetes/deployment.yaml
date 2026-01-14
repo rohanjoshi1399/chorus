@@ -1,0 +1,118 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: multi-agent-rag
+  labels:
+    app.kubernetes.io/name: multi-agent-rag
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: multi-agent-rag-api
+  namespace: multi-agent-rag
+  labels:
+    app: multi-agent-rag-api
+    version: v1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: multi-agent-rag-api
+  template:
+    metadata:
+      labels:
+        app: multi-agent-rag-api
+        version: v1
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: multi-agent-rag
+      containers:
+        - name: api
+          image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/multi-agent-rag:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          env:
+            - name: ENVIRONMENT
+              value: "production"
+            - name: LOG_LEVEL
+              value: "INFO"
+            - name: LOG_FORMAT
+              value: "json"
+            - name: QDRANT_URL
+              value: "http://qdrant:6333"
+            - name: REDIS_URL
+              value: "redis://redis:6379/0"
+            - name: NEO4J_URI
+              value: "bolt://neo4j:7687"
+          envFrom:
+            - secretRef:
+                name: multi-agent-rag-secrets
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: multi-agent-rag-api
+                topologyKey: kubernetes.io/hostname
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: multi-agent-rag-api
+  namespace: multi-agent-rag
+  labels:
+    app: multi-agent-rag-api
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8000
+      protocol: TCP
+  selector:
+    app: multi-agent-rag-api
+  # Session affinity for WebSocket connections
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 3600
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: multi-agent-rag
+  namespace: multi-agent-rag
+  annotations:
+    # For IRSA - AWS IAM role if needed
+    # eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/multi-agent-rag-role

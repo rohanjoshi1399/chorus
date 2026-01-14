@@ -1,0 +1,125 @@
+# Prometheus ServiceMonitor for application metrics
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: multi-agent-rag-monitor
+  namespace: multi-agent-rag
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: multi-agent-rag-api
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+---
+# PrometheusRule for alerting
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: multi-agent-rag-alerts
+  namespace: multi-agent-rag
+  labels:
+    release: prometheus
+spec:
+  groups:
+    - name: multi-agent-rag.rules
+      rules:
+        - alert: HighErrorRate
+          expr: |
+            sum(rate(http_requests_total{namespace="multi-agent-rag", status=~"5.."}[5m]))
+            / sum(rate(http_requests_total{namespace="multi-agent-rag"}[5m])) > 0.05
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: High error rate in Multi-Agent RAG
+            description: Error rate is {{ $value | humanizePercentage }}
+        
+        - alert: HighLatency
+          expr: |
+            histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{namespace="multi-agent-rag"}[5m])) by (le))
+            > 5
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: High latency in Multi-Agent RAG
+            description: P95 latency is {{ $value }}s
+        
+        - alert: PodNotReady
+          expr: |
+            kube_pod_status_ready{namespace="multi-agent-rag", condition="true"} == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: Pod not ready
+            description: Pod {{ $labels.pod }} is not ready
+        
+        - alert: HighMemoryUsage
+          expr: |
+            container_memory_usage_bytes{namespace="multi-agent-rag", container="api"}
+            / container_spec_memory_limit_bytes{namespace="multi-agent-rag", container="api"} > 0.9
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: High memory usage
+            description: Memory usage is {{ $value | humanizePercentage }}
+---
+# Grafana dashboard ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: multi-agent-rag-dashboard
+  namespace: multi-agent-rag
+  labels:
+    grafana_dashboard: "1"
+data:
+  multi-agent-rag.json: |
+    {
+      "dashboard": {
+        "title": "Multi-Agent RAG System",
+        "panels": [
+          {
+            "title": "Request Rate",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "sum(rate(http_requests_total{namespace=\"multi-agent-rag\"}[5m]))"
+              }
+            ]
+          },
+          {
+            "title": "Error Rate",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "sum(rate(http_requests_total{namespace=\"multi-agent-rag\", status=~\"5..\"}[5m]))"
+              }
+            ]
+          },
+          {
+            "title": "P95 Latency",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{namespace=\"multi-agent-rag\"}[5m])) by (le))"
+              }
+            ]
+          },
+          {
+            "title": "Active Pods",
+            "type": "stat",
+            "targets": [
+              {
+                "expr": "count(kube_pod_status_ready{namespace=\"multi-agent-rag\", condition=\"true\"})"
+              }
+            ]
+          }
+        ]
+      }
+    }

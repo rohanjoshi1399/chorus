@@ -1,0 +1,152 @@
+[tool.poetry]
+name = "multi-agent-rag"
+version = "0.1.0"
+description = "Production-ready multi-agent RAG system with GraphRAG and real-time WebSocket streaming"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+license = "MIT"
+python = "^3.11"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+# LangChain and LLM
+langchain = "^0.3.0"
+langchain-core = "^0.3.0"
+langchain-community = "^0.3.0"
+langchain-aws = "^0.2.0"
+langgraph = "^0.2.0"
+sentence-transformers = "^2.2.2"
+cohere = "^5.0.0"
+langsmith = "^0.1.0"
+
+# LLM & Embeddings
+boto3 = "^1.34.0"
+anthropic = "^0.39.0"
+
+# Vector Database
+qdrant-client = "^1.12.0"
+
+# Graph Database (Phase 4)
+neo4j = "^5.25.0"
+py2neo = "^2024.0.0"
+
+# API Framework
+fastapi = "^0.109.0"
+uvicorn = {extras = ["standard"], version = "^0.27.0"}
+websockets = "^12.0"
+pydantic = "^2.10.0"
+pydantic-settings = "^2.6.0"
+python-multipart = "^0.0.12"
+
+# Document Processing
+pypdf2 = "^3.0.0"
+pdfplumber = "^0.11.0"
+beautifulsoup4 = "^4.12.0"
+python-docx = "^1.1.0"
+markdown = "^3.7.0"
+
+# Memory & Caching
+redis = "^5.0.0"
+hiredis = "^2.3.0"
+
+# Utilities
+tiktoken = "^0.8.0"
+rank-bm25 = "^0.2.2"
+python-dotenv = "^1.0.0"
+pyyaml = "^6.0.0"
+requests = "^2.32.0"
+httpx = "^0.27.0"
+tenacity = "^9.0.0"
+
+# Monitoring
+prometheus-client = "^0.21.0"
+structlog = "^24.4.0"
+
+# Web Search Tools (Phase 4)
+serpapi = {version = "^0.1.5", optional = true}
+tavily-python = {version = "^0.5.0", optional = true}
+
+[tool.poetry.group.dev.dependencies]
+# Testing
+pytest = "^8.3.0"
+pytest-cov = "^6.0.0"
+pytest-asyncio = "^0.24.0"
+pytest-mock = "^3.14.0"
+
+# Linting & Formatting
+ruff = "^0.8.0"
+black = "^24.10.0"
+isort = "^5.13.0"
+mypy = "^1.13.0"
+
+# Load Testing
+locust = "^2.32.0"
+
+# Documentation
+mkdocs = "^1.6.0"
+mkdocs-material = "^9.5.0"
+
+[tool.poetry.extras]
+websearch = ["serpapi", "tavily-python"]
+all = ["serpapi", "tavily-python"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",  # line too long (handled by black)
+    "B008",  # do not perform function calls in argument defaults
+]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]  # unused imports
+"tests/**/*" = ["B011"]   # assert false
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-ra -q --strict-markers --cov=src --cov-report=term-missing"
+testpaths = ["tests"]
+pythonpath = ["."]
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["*/tests/*", "*/__init__.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
