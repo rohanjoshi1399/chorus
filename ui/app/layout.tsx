@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-    title: 'Multi-Agent RAG | Intelligent Knowledge Assistant',
+    title: 'Chorus: Multi-Agent RAG | Intelligent Knowledge Assistant',
     description: 'Production-ready conversational AI with 8-agent hierarchical orchestration and 90%+ retrieval precision',
     keywords: ['RAG', 'AI', 'LangGraph', 'LangChain', 'Multi-Agent'],
 };

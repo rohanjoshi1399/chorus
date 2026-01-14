@@ -1,4 +1,4 @@
-# Multi-Agent RAG System
+# Chorus: A Multi-Agent RAG System
 
 > **Conversational AI with 8-agent hierarchical orchestration, GraphRAG knowledge graphs, and real-time WebSocket streaming**
 
@@ -16,6 +16,8 @@ An advanced Retrieval-Augmented Generation (RAG) system featuring 8 specialized 
 - **Semantic Chunking** with Max-Min algorithm
 - **Hybrid Search** (Vector + BM25 with RRF fusion)
 - **Cross-Encoder Reranking** (BGE-Reranker-Large)
+
+![Chorus Landing Page](/ui/Chorus_Landing_Page.png)
 
 ### Key Features
 

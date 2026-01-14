@@ -89,7 +89,7 @@ kubernetes/*secret*.yaml
 tmp/
 temp/
 *.tmp
-starter.md
+.internal*
 
 # Node.js
 node_modules/

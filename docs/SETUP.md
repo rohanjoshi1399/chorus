@@ -15,7 +15,7 @@
 ```bash
 # Clone repository
 git clone <your-repo-url>
-cd multi-agent-rag
+cd chorus
 
 # Create virtual environment
 python -m venv venv

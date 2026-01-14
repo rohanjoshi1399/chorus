@@ -1,6 +1,6 @@
-# Multi-Agent RAG UI
+# Chorus UI
 
-Modern React dashboard for the Multi-Agent RAG system.
+Modern React dashboard for the Chorus Multi-Agent RAG system.
 
 ## Tech Stack
 

@@ -12,7 +12,7 @@ export default function HomePage() {
                             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
                                 <Sparkles className="w-5 h-5 text-white" />
                             </div>
-                            <span className="text-h4 font-semibold">Multi-Agent RAG</span>
+                            <span className="text-h4 font-semibold">Chorus: A Multi-Agent RAG System</span>
                         </div>
 
                         <div className="hidden md:flex items-center gap-1">
